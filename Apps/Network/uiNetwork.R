@@ -11,7 +11,7 @@ iNetwork_tab <- tabItem(
     status = "warning",
     solidHeader = TRUE,
     selected = "Preparation",
-# Preparation Tab ----
+    # Preparation Tab ----
     tabPanel(
       "Preparation",
       box(
@@ -27,7 +27,7 @@ iNetwork_tab <- tabItem(
         gt_output("headNetwork")
       )
     ),
-## Configuration Tab ----
+    ## Configuration Tab ----
     tabPanel(
       "Configuration",
       box(
@@ -62,4 +62,3 @@ iNetwork_tab <- tabItem(
     )
   )
 )
-
