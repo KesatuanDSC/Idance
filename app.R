@@ -182,6 +182,10 @@ shinyApp(
           color: black !important;
           font-weight: bold;
         }
+
+        .card-warning:not(.card-outline)>.card-header {
+            background-color: #FFEB7A;
+        }
         }
 
     ")),
