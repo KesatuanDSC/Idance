@@ -171,7 +171,7 @@ shinyApp(
       
       .dark-mode .main-sidebar .nav-sidebar > .nav-item > .nav-link.active {
         background-color: #FFB300 !important;
-        color: #fff !important;
+        color: #000 !important;
       }
         
         #Box .card-header {
