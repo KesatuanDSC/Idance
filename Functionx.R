@@ -4,11 +4,14 @@ generate_completion <- function(user_prompt, tipe) {
     api_endpoint <- "https://aoaiinvestigator.openai.azure.com/openai/deployments/gpt-4o-3/chat/completions?api-version=2025-01-01-preview"
     if(tipe == 'Regression'){
       sys_prompt <- "Jelaskan Hasil Regression berikut ini."
+    } else if(tipe == 'Clustering'){
+      sys_prompt <- "Jelaskan Hasil Clustering setiap poinnya dan berikan kesimpulannya serta hilangkan elemen boldnya setiap kalimat agar tidak tampil tanda **."
     } else if(tipe == 'Story'){
-      sys_prompt <- "Ringkas cerita berikut ini, dapatkan intinya, termasuk ukuran sentimen dan keakrabannya."
+        sys_prompt <- "Ringkas cerita berikut ini, dapatkan intinya, termasuk ukuran sentimen dan keakrabannya."
     } else {
       stop("Tipe tidak dikenali.")
     }
+    
 
     response <- POST(
     url = api_endpoint,
@@ -114,6 +117,8 @@ ComputeSummation <- function(ds) {
 gemini_completion <- function(user_prompt,tipe) {
   if(tipe == 'Regression'){
     sys_prompt <- "Jelaskan Hasil Regression berikut ini."
+  } else if(tipe == 'Clustering'){
+    sys_prompt <- "Jelaskan Hasil Clustering setiap poinnya dan berikan kesimpulannya serta hilangkan elemen boldnya setiap kalimat agar tidak tampil tanda **."
   } else if(tipe == 'Story'){
     sys_prompt <- "Ringkas cerita berikut ini, dapatkan intinya, termasuk ukuran sentimen dan keakrabannya."
   } else {
