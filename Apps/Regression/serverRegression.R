@@ -1,3 +1,4 @@
+
 dataRegression <- reactive({
   req(input$uploadRegression)
   
@@ -16,9 +17,12 @@ output$varSelectUI <- renderUI({
   varNames <- names(df)
   tagList(
     fluidRow(
-      column(5, selectInput("DVariable", "Dependent Variable", choices = varNames)),
-      column(5, selectInput("IVariables", "Independent Variables", choices = varNames, multiple = TRUE)),
-      column(2, actionButton("runModel", "Run Model"))
+      column(4, selectInput("DVariable", "Dependent Variable", choices = varNames)),
+      column(4, selectInput("IVariables", "Independent Variables", choices = varNames, multiple = TRUE)),
+      column(4,              tags$div(style = "margin-top: 32px;",
+                                      actionButton("runModel", "Run Model")
+      )
+      )
     )
   )
 })
@@ -31,13 +35,34 @@ model <- eventReactive(input$runModel, {
   lm(formula, data = df)
 })
 
-output$regressionPlot <- renderPlot({
+output$regressionPlot <- renderPlotly({
   req(model())
   df <- dataRegression()
-    ggplot(df, aes_string(x = input$IVariables[1], y = input$DVariable)) +
-      geom_point() +
-      geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
-      labs(title = "Regression Plot", x = input$IVariables[1], y = input$DVariable)
+  
+  varI1 <- input$IVariables[1]
+  varI2 <- input$IVariables[2]
+  varD <- input$DVariable
+  
+  # Buat plot ggplot dulu
+  p <- ggplot(df) +
+    geom_point(aes_string(x = varI1, y = varD), color = "blue", alpha = 0.6) +
+    geom_smooth(aes_string(x = varI1, y = varD), method = "lm", se = FALSE, color = "blue") +
+    geom_point(aes_string(x = varI2, y = varD), color = "orange", alpha = 0.6) +
+    geom_smooth(aes_string(x = varI2, y = varD), method = "lm", se = FALSE, color = "orange") +
+    labs(title = "Regression Plot",
+         x = "Independent Variables",
+         y = varD)
+  
+  ggplotly(p)
+  
+  
+  # Konversi ke plotly
+  ggplotly(p) %>%
+    layout(hoverlabel = list(
+      bgcolor = "white",
+      bordercolor = "black",
+      font = list(color = "black")
+    ))
 })
 
 output$regSummary <- renderPrint({
@@ -55,7 +80,7 @@ TeksRegression <- reactive({
 TheExplanation <- reactive({
   req(TeksRegression())
   user_prompt <- TeksRegression()
-#  generate_completion(user_prompt, 'Regression')
+  #  generate_completion(user_prompt, 'Regression')
   gemini_completion(user_prompt, 'Regression')
 })
 
@@ -79,6 +104,6 @@ output$downloadregExplanation <- downloadHandler(
     paste("Regression_Explanation_", Sys.Date(), ".txt", sep = "")
   },
   content = function(file) {
-    writeLines(TheExplanation(), file)
+    writeLines(TheExplanation(),file)
   }
 )
