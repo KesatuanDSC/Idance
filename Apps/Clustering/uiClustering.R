@@ -1,3 +1,5 @@
+#uiClustering.R
+
 iClustering_tab <- tabItem(
   tabName = "iClustering",
   tabBox(
@@ -47,14 +49,14 @@ iClustering_tab <- tabItem(
           options = list(
             placeholder = 'Select Features [ >=2 ]'
           )
-        # selectizeInput(
-        #   'IDColumnClustering', 
-        #   label = "Choose Identity Feature[s] [ >=2 ]", 
-        #   choices = NULL, 
-        #   multiple = TRUE,
-        #   options = list(
-        #   placeholder = 'Select Identity Features [ >=2 ]'
-        #   )
+          # selectizeInput(
+          #   'IDColumnClustering', 
+          #   label = "Choose Identity Feature[s] [ >=2 ]", 
+          #   choices = NULL, 
+          #   multiple = TRUE,
+          #   options = list(
+          #   placeholder = 'Select Identity Features [ >=2 ]'
+          #   )
         ),
         numericInput(
           inputId = "nCluster",
@@ -65,7 +67,7 @@ iClustering_tab <- tabItem(
           step = 1
         ),
         actionButton(inputId = "Clusterize", label = "Show Cluster"),
-        plotlyOutput("ClusterPlot")
+        plotlyOutput("ClusterPlot") %>% withSpinner(color = "#FFEB7A")
       )
     ),
     # Summary Data Tab ----
@@ -81,6 +83,20 @@ iClustering_tab <- tabItem(
         height = "100%",
         id = "Box",
         verbatimTextOutput("SummaryCluster")
+      ),
+      tabPanel(
+        "Explanation",
+        box(
+          title = "Explanation",
+          status = "warning",
+          solidHeader = TRUE,
+          collapsible = TRUE,
+          id = "Box",
+          width = 12,
+          height = "100%",
+          verbatimTextOutput("clusterExplanation") %>% withSpinner(color = "#FFEB7A"),
+          downloadButton("downloadClusterExplanation", "Download Explanation")
+        )
       )
     )
   )
