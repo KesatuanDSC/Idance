@@ -1,4 +1,3 @@
-
 dataRegression <- reactive({
   req(input$uploadRegression)
   
@@ -39,19 +38,29 @@ output$regressionPlot <- renderPlotly({
   req(model())
   df <- dataRegression()
   
-  varI1 <- input$IVariables[1]
-  varI2 <- input$IVariables[2]
-  varD <- input$DVariable
+  library(ggplot2)
+  library(ggplot2)
+  library(plotly)
   
-  # Buat plot ggplot dulu
-  p <- ggplot(df) +
-    geom_point(aes_string(x = varI1, y = varD), color = "blue", alpha = 0.6) +
-    geom_smooth(aes_string(x = varI1, y = varD), method = "lm", se = FALSE, color = "blue") +
-    geom_point(aes_string(x = varI2, y = varD), color = "orange", alpha = 0.6) +
-    geom_smooth(aes_string(x = varI2, y = varD), method = "lm", se = FALSE, color = "orange") +
-    labs(title = "Regression Plot",
-         x = "Independent Variables",
-         y = varD)
+  varsI <- input$IVariables  
+  varD <- input$DVariable   
+  
+  p <- ggplot(df)
+  
+  colors <- c("blue", "orange", "green", "purple", "red", "brown", "pink", "cyan")
+  
+  for (i in seq_along(varsI)) {
+    color <- colors[(i - 1) %% length(colors) + 1]  
+    p <- p +
+      geom_point(aes_string(x = varsI[i], y = varD), color = color, alpha = 0.6) +
+      geom_smooth(aes_string(x = varsI[i], y = varD), method = "lm", se = FALSE, color = color)
+  }
+  
+  p <- p + labs(
+    title = "Regression Plot",
+    x = "Independent Variables",
+    y = varD
+  )
   
   ggplotly(p)
   
@@ -104,6 +113,6 @@ output$downloadregExplanation <- downloadHandler(
     paste("Regression_Explanation_", Sys.Date(), ".txt", sep = "")
   },
   content = function(file) {
-    writeLines(TheExplanation(),file)
+    writeLines(TheExplanation(), file)
   }
 )
