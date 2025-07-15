@@ -1,4 +1,3 @@
-
 output$filesCluster <- renderTable(input$uploadCluster)
 
 dataClustering <- reactive({
@@ -89,7 +88,7 @@ TheCluster <- reactive({
     S1[i, "Teks"] <- paste(unlist(S1[i, ]), collapse = " ")
   }
   # End of preparing teks
-
+  
   ScaledData <- as.data.frame(scale(SelectedData))
   Data_K <- kmeans(ScaledData, centers = input$nCluster, nstart = 25)
   cluster <- as.factor(Data_K$cluster)
@@ -116,3 +115,34 @@ output$SummaryCluster <- renderPrint({
   req(SelectedDataClustering())
   summary(SelectedDataClustering())
 })
+
+# Ambil summary dari data yang di-cluster
+TeksClustering <- reactive({
+  req(SelectedDataClustering())
+  summary_text <- capture.output(summary(SelectedDataClustering()))
+  paste0(summary_text, collapse = "\n")
+})
+
+# Kirim ke AI
+TheClusteringExplanation <- reactive({
+  req(TeksClustering())
+  user_prompt <- TeksClustering()
+  gemini_completion(user_prompt, 'Clustering')
+})
+
+# Tampilkan hasil AI
+output$clusterExplanation <- renderText({
+  req(TheClusteringExplanation())
+  hasil <- TheClusteringExplanation()
+  paste0("Penjelasan hasil Clustering:\n", hasil)
+})
+
+# Tombol unduh
+output$downloadClusterExplanation <- downloadHandler(
+  filename = function() {
+    paste("Clustering_Explanation_", Sys.Date(), ".txt", sep = "")
+  },
+  content = function(file) {
+    writeLines(TheClusteringExplanation()$response, file)
+  }
+)
