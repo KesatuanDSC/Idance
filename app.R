@@ -74,7 +74,7 @@ shinyApp(
         menuItem("Network Graph", tabName = "iNetwork", icon = icon("diagram-project")),
         menuItem("Regression", tabName = "iRegression", icon = icon("chart-line"))
         #menuItem("Statistical Sampling", tabName = "iSampling", icon = icon("vials")),
-        #menuItem("Fuzzy Duplicate", tabName = "iFuzzyDup", icon = icon("check-double")),
+        menuItem("Fuzzy Duplicate", tabName = "iFuzzyDup", icon = icon("check-double")),
         #menuItem("Benford Analysis", tabName = "iBenford", icon = icon("magnifying-glass-dollar")),
         #menuItem("WhatsApp Analysis", tabName = "iWhatsApp", icon = icon("whatsapp"))
       )
@@ -250,7 +250,7 @@ shinyApp(
         iNetwork_tab,
         iRegression_tab
         # iSampling_tab,
-        # iFuzzyDup_tab,
+        iFuzzyDup_tab,
         # iBenford_tab,
         # iWhatsApp_tab
       )
@@ -279,7 +279,7 @@ shinyApp(
     source("Apps/Network/serverNetwork.R", local = TRUE)
     source("Apps/Regression/serverRegression.R", local = TRUE)
     #source("Apps/Sampling/serverSampling.R", local = TRUE)
-    #source("Apps/FuzzyDup/serverFuzzyDup.R", local = TRUE)
+    source("Apps/FuzzyDup/serverFuzzyDup.R", local = TRUE)
     #source("Apps/Benford/serverBenford.R", local = TRUE)
     #source("Apps/WhatsApp/serverWhatsApp.R", local = TRUE)
     
