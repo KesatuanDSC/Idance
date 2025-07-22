@@ -63,11 +63,18 @@ ClusterAssignment <- reactiveVal(NULL)
 FilteredRowNames <- reactiveVal(NULL)
 
 TheCluster <- eventReactive(input$Clusterize, {
-  req(SelectedDataClustering())
-  SelectedData <- SelectedDataClustering()
+  validate(
+    need(!is.null(input$ColumnClustering) && length(input$ColumnClustering) > 0,
+         "⚠️ Error: Anda belum memilih variabel untuk clustering."),
+    need(length(input$ColumnClustering) >= 2,
+         "⚠️ Error: Pilih minimal 2 variabel numerik untuk clustering.")
+  )
+  
+  df <- dataClustering()
+  SelectedData <- df[, input$ColumnClustering, drop = FALSE]
   
   complete_idx <- complete.cases(SelectedData)
-  FilteredRowNames(rownames(SelectedData)[complete_idx])  # simpan rownames yang valid
+  FilteredRowNames(rownames(SelectedData)[complete_idx])
   
   SelectedData <- SelectedData[complete_idx, , drop = FALSE]
   
@@ -94,6 +101,7 @@ TheCluster <- eventReactive(input$Clusterize, {
           text = ~paste("<b>ID:</b>", FilteredRowNames(), "<br>", Teks),
           type = "scatter", mode = "markers")
 })
+
 
 output$ClusterPlot <- renderPlotly({
   TheCluster()
