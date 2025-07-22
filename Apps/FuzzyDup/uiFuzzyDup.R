@@ -24,7 +24,10 @@ iFuzzyDup_tab <- tabItem(
           collapsible = TRUE,
           width = 12,
           height = "100%",
-          DTOutput("tableFuzzyDup") %>% withSpinner(color = "#FFEB7A")
+          div(
+            style = "overflow-x: auto; max-width: 100%;",
+            DTOutput("tableFuzzyDup") %>% withSpinner(color = "#FFEB7A")
+          )
         )
       )
     )
