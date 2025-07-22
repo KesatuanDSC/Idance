@@ -24,7 +24,7 @@ iWhatsApp_tab <- tabItem(
         height = "100%",
         fileInput("uploadWhatsApp", "Upload a file", accept = ".txt"),
         tableOutput("filesWhatsApp"),
-        plotlyOutput("visWAComposition") %>% withSpinner(color = "#5bc0de")
+        plotlyOutput("visWAComposition") %>% withSpinner(color = "#FFEB7A")
       )
     ),
     tabPanel(
@@ -41,7 +41,7 @@ iWhatsApp_tab <- tabItem(
             collapsible = TRUE,
             width = 12,
             height = "100%",
-            wordcloud2Output("visWAWordCloud") %>% withSpinner(color = "#5bc0de")
+            wordcloud2Output("visWAWordCloud") %>% withSpinner(color = "#FFEB7A")
           )
         )
       ),
@@ -57,7 +57,7 @@ iWhatsApp_tab <- tabItem(
             width = 12,
             collapsible = TRUE,
             height = "100%",
-            plotlyOutput("visWAHourly") %>% withSpinner(color = "#5bc0de")
+            plotlyOutput("visWAHourly") %>% withSpinner(color = "#FFEB7A")
           )
         ),
         column(
@@ -71,7 +71,7 @@ iWhatsApp_tab <- tabItem(
             collapsible = TRUE,
             width = 12,
             height = "100%",
-            plotlyOutput("visWADaily") %>% withSpinner(color = "#5bc0de")
+            plotlyOutput("visWADaily") %>% withSpinner(color = "#FFEB7A")
           )
         )
       ),
@@ -87,7 +87,7 @@ iWhatsApp_tab <- tabItem(
         collapsible = TRUE,
         width = 12,
         height = "100%",
-        plotlyOutput("visWATSMonthlyYearly") %>% withSpinner(color = "#5bc0de")
+        plotlyOutput("visWATSMonthlyYearly") %>% withSpinner(color = "#FFEB7A")
       )
     ),
     tabPanel(
@@ -106,7 +106,7 @@ iWhatsApp_tab <- tabItem(
             height = "100%",
             textInput("WAPeriode", "Select Period [MM/YY]", value = "04/25"),
             actionButton("WAInsight", "Get Insight"),
-            verbatimTextOutput("WAExplanation") %>% withSpinner(color = "#5bc0de"),
+            verbatimTextOutput("WAExplanation") %>% withSpinner(color = "#FFEB7A"),
             downloadButton("downloadWAInsight", "Download Insight")
           )
         )
@@ -114,5 +114,4 @@ iWhatsApp_tab <- tabItem(
     )
   )
 )
-
 
