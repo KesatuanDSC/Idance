@@ -12,7 +12,7 @@ iBenford_tab <- tabItem(
     fileInput("uploadBenford", "Upload a file", accept = c(".csv", ".tsv",".xlsx")),
     uiOutput("varSelectUIBenford"),
     tabBox(
-      id = "Benford",
+      id = "Box",
       title = "Benford Analysis",
       elevation = 2,
       width = 12,
@@ -24,11 +24,11 @@ iBenford_tab <- tabItem(
       selected = "Benford Plot",
       tabPanel(
         "Benford Plot",
-        plotOutput("PlotBenford") %>% withSpinner(color = "#0dc5c1"),
+        plotOutput("PlotBenford") %>% withSpinner(color = "#FFEB7A"),
       ),
       tabPanel(
         "Suspected Records",
-        DTOutput("BenfordResult") %>% withSpinner(color = "#0dc5c1")
+        DTOutput("BenfordResult") %>% withSpinner(color = "#FFEB7A")
       )
     )
   )
