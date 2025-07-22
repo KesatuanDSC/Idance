@@ -1,6 +1,17 @@
 #' Regression Tab ----
 iRegression_tab <- tabItem(
   tabName = "iRegression",
+  
+  tags$style(HTML("
+    .shiny-output-error-validation {
+      color: #FFB300;
+      font-weight: bold;
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  ")),
+  
   tabBox(
     title = "Regression",
     elevation = 2,
@@ -12,6 +23,7 @@ iRegression_tab <- tabItem(
     status = "warning",
     solidHeader = TRUE,
     selected = "Regression",
+    
     # Preparation Tab ----
     tabPanel(
       "Regression",
@@ -42,6 +54,8 @@ iRegression_tab <- tabItem(
         )
       )
     ),
+    
+    # Data Summary Tab ----
     tabPanel(
       "Data Summary",
       box(
@@ -56,6 +70,8 @@ iRegression_tab <- tabItem(
         verbatimTextOutput("regSummary")
       )
     ),
+    
+    # Explanation Tab ----
     tabPanel(
       "Explanation",
       box(
