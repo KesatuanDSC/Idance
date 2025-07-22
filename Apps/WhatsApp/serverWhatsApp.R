@@ -45,15 +45,30 @@ dataWhatsApp <- reactive({
     # === Format Android ===
     df <- lines %>%
       as_tibble() %>%
-      filter(grepl("^\\d{2}/\\d{2}/\\d{2} \\d{2}\\.\\d{2}", value)) %>%
+      filter(grepl("^\\d{1,2}/\\d{1,2}/\\d{2}[,]?\\s+\\d{1,2}[:\\.]\\d{2}", value)) %>%
       mutate(
-        tanggal = str_extract(value, "^\\d{2}/\\d{2}/\\d{2}"),
-        waktu = str_extract(value, "(?<= )\\d{2}\\.\\d{2}"),
-        pesan = str_remove(value, "^\\d{2}/\\d{2}/\\d{2} \\d{2}\\.\\d{2} - ")
+        raw_tanggal = str_extract(value, "^\\d{1,2}/\\d{1,2}/\\d{2}"),
+        raw_waktu = str_extract(value, "(?<= )\\d{1,2}[:\\.]\\d{2}\\s*(am|pm|AM|PM)?"),
+        waktu_24 = format(
+          suppressWarnings(lubridate::parse_date_time(raw_waktu, orders = c("I:M p", "H:M"))),
+          "%H.%M"
+        ),
+        pesan = str_remove(value, "^\\d{1,2}/\\d{1,2}/\\d{2}[,]?\\s+\\d{1,2}[:\\.]\\d{2}\\s*(am|pm|AM|PM)? - ")
       ) %>%
+      mutate(
+        tanggal_parsed = coalesce(
+          suppressWarnings(mdy(raw_tanggal)),
+          suppressWarnings(dmy(raw_tanggal))
+        ),
+        tanggal = format(tanggal_parsed, "%d/%m/%y")
+      ) %>%
+      filter(!is.na(tanggal_parsed)) %>%
       mutate(pesan = str_trim(pesan)) %>%
-      separate(pesan, into = c("pengirim", "isi_pesan"), sep = ":", extra = "merge") %>%
-      select(tanggal, waktu, pengirim, isi_pesan)
+      separate(pesan, into = c("pengirim", "isi_pesan"), sep = ":", extra = "merge", fill = "left") %>%
+      filter(!is.na(pengirim) & pengirim != "") %>%
+      select(tanggal, tanggal_date = tanggal_parsed, waktu = waktu_24, pengirim, isi_pesan)
+    
+    
   }
   
   return(df)
@@ -94,10 +109,14 @@ output$visWAWordCloud <- renderWordcloud2({
   wordcloud2(dfw, size = 1.5, minSize = 0.5, color = "random-light", backgroundColor = "black", rotateRatio = 1)
 })
 
+
+
 resultWAHourly <- reactive({
   req(dataWhatsApp())
   df <- dataWhatsApp()
-  df$hari <- strftime(as.Date(df$tanggal, format = '%d/%m/%y'), '%A')
+  Sys.setlocale("LC_TIME", "C")
+  df$hari <- weekdays(as.Date(df$tanggal, format = '%d/%m/%y'))
+  
   df$jam <- str_sub(df$waktu, 1, 2)
   df %>% group_by(jam) %>% summarise(total = n())
 })
@@ -111,7 +130,9 @@ output$visWAHourly <- renderPlotly({
 resultWADaily <- reactive({
   req(dataWhatsApp())
   df <- dataWhatsApp()
-  df$hari <- strftime(as.Date(df$tanggal, format = '%d/%m/%y'), '%A')
+  Sys.setlocale("LC_TIME", "C")
+  df$hari <- weekdays(as.Date(df$tanggal, format = '%d/%m/%y'))
+  
   df %>% group_by(hari) %>% summarise(total = n())
 })
 
