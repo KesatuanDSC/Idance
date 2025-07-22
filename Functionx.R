@@ -2,7 +2,7 @@ generate_completion <- function(user_prompt, tipe) {
   api_key <- "68MINrmZAgPQeTePztMlbuGoqJUKqTEeGA8KluGnWJTkXG0yOy0eJQQJ99BGACfhMk5XJ3w3AAAAACOGUaJF"
   api_endpoint <- "https://bidicsai.cognitiveservices.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2025-01-01-preview"
   if(tipe == 'Regression'){
-    sys_prompt <- "Jelaskan Hasil Regression berikut ini beserta kesimpulannya."
+    sys_prompt <- "Buatkan data exploration dari setiap variabelnya lalu jelaskan Hasil Regression berikut ini beserta kesimpulannya."
   } else if(tipe == 'Clustering'){
     sys_prompt <- "Jelaskan Hasil Clustering berdasarkan cluster yang terbentuk dengan dibuatkan poin tiap cluster serta usulkan juga nama atau tema yang tepat untuk masing-masing cluster dan berikan kesimpulannya."
   } else if(tipe == 'Story'){
