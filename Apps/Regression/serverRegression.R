@@ -87,7 +87,7 @@ output$regressionPlot <- renderPlotly({
       legend.text = element_text(size = 11)
     ) +
     scale_color_manual(values = setNames(
-      RColorBrewer::brewer.pal(n = length(ivars), name = "Set2"),
+      RColorBrewer::brewer.pal(n = length(ivars), name = "Set3"),
       ivars
     ))
   
