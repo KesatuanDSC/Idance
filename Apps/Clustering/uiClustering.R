@@ -1,36 +1,101 @@
-#' Benford Analysis Tab ----
-iBenford_tab <- tabItem(
-  tabName = "iBenford",
-  box(
-    title = "Benford Analysis",
-    status = "warning",
+#uiClustering.R
+
+iClustering_tab <- tabItem(
+  tabName = "iClustering",
+  tabBox(
+    title = "Interactive Clustering",
+    elevation = 2,
     id = "Box",
-    solidHeader = TRUE,
-    collapsible = TRUE,
     width = 12,
-    height = "100%",
-    fileInput("uploadBenford", "Upload a file", accept = c(".csv", ".tsv",".xlsx")),
-    uiOutput("varSelectUIBenford"),
-    tabBox(
-      id = "Benford",
-      title = "Benford Analysis",
-      elevation = 2,
-      width = 12,
-      collapsible = FALSE, 
-      closable = FALSE,
-      type = "tabs",
-      status = "warning",
-      solidHeader = TRUE,
-      selected = "Benford Plot",
-      tabPanel(
-        "Benford Plot",
-        plotOutput("PlotBenford") %>% withSpinner(color = "#0dc5c1"),
+    collapsible = FALSE, 
+    closable = FALSE,
+    type = "tabs",
+    status = "warning",
+    solidHeader = TRUE,
+    selected = "Preparation",
+    # Preparation Tab ----
+    tabPanel(
+      "Preparation",
+      box(
+        title = "Preparation",
+        status = "warning",
+        solidHeader = TRUE,
+        collapsible = TRUE,
+        width = 12,
+        height = "100%",
+        id = "Box",
+        fileInput("uploadCluster", "Upload a file", accept = c(".csv", ".tsv",".xlsx")),
+        tableOutput("filesCluster"),
+        gt_output("headClustering")
+      )
+    ),
+    # Feature Selection Tab ----
+    tabPanel(
+      "Feature Selection",
+      box(
+        "Feature Selection",
+        title = "Features Selection",
+        status = "warning",
+        solidHeader = TRUE,
+        collapsible = TRUE,
+        width = 12,
+        height = "100%",
+        id = "Box",
+        selectizeInput(
+          'ColumnClustering', 
+          label = "Choose Features [ >=2 ]", 
+          choices = NULL, 
+          multiple = TRUE,
+          options = list(
+            placeholder = 'Select Features [ >=2 ]'
+          )
+          # selectizeInput(
+          #   'IDColumnClustering', 
+          #   label = "Choose Identity Feature[s] [ >=2 ]", 
+          #   choices = NULL, 
+          #   multiple = TRUE,
+          #   options = list(
+          #   placeholder = 'Select Identity Features [ >=2 ]'
+          #   )
+        ),
+        numericInput(
+          inputId = "nCluster",
+          label = "Number of Clusters",
+          value = 3,
+          min = 2,
+          max = 10,
+          step = 1
+        ),
+        actionButton(inputId = "Clusterize", label = "Show Cluster"),
+        plotlyOutput("ClusterPlot") %>% withSpinner(color = "#FFEB7A")
+      )
+    ),
+    # Summary Data Tab ----
+    tabPanel(
+      "Data Summary",
+      box(
+        "Data Summary",
+        title = "Data Summary",
+        status = "warning",
+        solidHeader = TRUE,
+        collapsible = TRUE,
+        width = 12,
+        height = "100%",
+        id = "Box",
+        verbatimTextOutput("SummaryCluster")
       ),
       tabPanel(
-        "Suspected Records",
-        div(
-          style = "min-height: 400px; overflow-x: auto; max-width: 100%;",
-          DTOutput("BenfordResult") %>% withSpinner(color = "#0dc5c1")
+        "Explanation",
+        box(
+          title = "Explanation",
+          status = "warning",
+          solidHeader = TRUE,
+          collapsible = TRUE,
+          id = "Box",
+          width = 12,
+          height = "100%",
+          verbatimTextOutput("clusterExplanation") %>% withSpinner(color = "#FFEB7A"),
+          downloadButton("downloadClusterExplanation", "Download Explanation")
         )
       )
     )
