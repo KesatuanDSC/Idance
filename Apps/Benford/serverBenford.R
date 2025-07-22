@@ -16,10 +16,14 @@ output$varSelectUIBenford <- renderUI({
   varNames <- names(df)
   tagList(
     fluidRow(
-      column(8, selectInput("BVariable", "Numeric Column", choices = varNames, multiple = FALSE)),
-      column(4, numericInput("NumberofDigit", "Number of Digit to Test", value = 2))
+      column(4, selectInput("BVariable", "Numeric Column", choices = varNames, multiple = FALSE)),
+      column(4, numericInput("NumberofDigit", "Number of Digit to Test", value = 2)),
+      column(4,
+             tags$div(style = "margin-top: 32px;",
+                      actionButton("runBenford", "Run Benford")
+             )
+      )
     ),
-    actionButton("runBenford", "Run Benford")
   )
 })
 
@@ -36,18 +40,18 @@ resultBA <- eventReactive(input$runBenford, {
   myDataSet <- na.omit(myDataSet)
   output = list()
   print(head(myDataSet))
-
+  
   d1 = myDataSet%>% group_by(fd) %>% count()
   d12 = (myDataSet%>% group_by(f2d) %>% count())[1:90,]
-
+  
   print(d1)
   n1 = nrow(myDataSet)
   n2 = n12 = nrow(filter(myDataSet,!is.na(sd)))
-
+  
   df1 = data.frame(1:9,d1[,2]/n1,d1[,2],n1) # Get Proportion, Count, and Total Count
   df12 = data.frame(10:99,d12[,2]/n12,d12[,2],n12) # Get Proportion, Count, and Total Count
   print(df1)
-
+  
   colnames(df1) = colnames(df12) = c("digit", "prop", "count","n")
   output = list(first1 = df1, first2 = df12)
   return(output)
@@ -99,5 +103,5 @@ output$BenfordResult <- renderDT({
                     list(extend = 'pdf', filename = paste0("MUS_", format(Sys.time(), "%Y%m%d_%H%M%S")))),
                   text = 'Download'
                 )
-  ) 
+  )
 })
