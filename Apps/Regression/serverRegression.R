@@ -25,48 +25,72 @@ output$varSelectUI <- renderUI({
       )
     )
   )
+  
 })
 
 model <- eventReactive(input$runModel, {
   req(input$DVariable, input$IVariables)
   df <- dataRegression()
+  
+  validate(
+    need(input$DVariable %in% names(df), "⚠️ Error: Variabel dependen tidak ditemukan di data."),
+    need(all(input$IVariables %in% names(df)), "⚠️ Error: Satu atau lebih variabel independen tidak ditemukan di data."),
+    need(is.numeric(df[[input$DVariable]]), "⚠️ Error: Variabel dependen harus bertipe numerik."),
+    need(all(sapply(df[input$IVariables], is.numeric)), "⚠️ Error: Semua variabel independen harus bertipe numerik.")
+  )
+  
   formula <- as.formula(paste(input$DVariable, "~", paste(input$IVariables, collapse = "+")))
   print(df)
   lm(formula, data = df)
 })
 
 output$regressionPlot <- renderPlotly({
-  req(model())
   df <- dataRegression()
+  varD <- input$DVariable
+  ivars <- input$IVariables
   
-  library(ggplot2)
-  library(ggplot2)
-  library(plotly)
-  
-  varsI <- input$IVariables  
-  varD <- input$DVariable   
-  
-  p <- ggplot(df)
-  
-  colors <- c("blue", "orange", "green", "purple", "red", "brown", "pink", "cyan")
-  
-  for (i in seq_along(varsI)) {
-    color <- colors[(i - 1) %% length(colors) + 1]  
-    p <- p +
-      geom_point(aes_string(x = varsI[i], y = varD), color = color, alpha = 0.6) +
-      geom_smooth(aes_string(x = varsI[i], y = varD), method = "lm", se = FALSE, color = color)
-  }
-  
-  p <- p + labs(
-    title = "Regression Plot",
-    x = "Independent Variables",
-    y = varD
+  validate(
+    need(length(ivars) >= 1, "⚠️ Error: Pilih minimal satu variabel independen."),
+    need(varD %in% names(df), "⚠️ Error: Variabel dependen tidak ditemukan di data."),
+    need(all(ivars %in% names(df)), "⚠️ Error: Satu atau lebih variabel independen tidak ditemukan di data."),
+    need(is.numeric(df[[varD]]), "⚠️ Error: Variabel dependen harus bertipe numerik."),
+    need(all(sapply(df[ivars], is.numeric)), "⚠️ Error: Semua variabel independen harus bertipe numerik.")
   )
   
-  ggplotly(p)
+  req(model())
   
+  # Buat data dalam format long
+  df_list <- lapply(ivars, function(varI) {
+    df %>%
+      dplyr::select(!!sym(varI), !!sym(varD)) %>%
+      dplyr::rename(IndepVar = !!sym(varI)) %>%
+      dplyr::mutate(Variable = varI)
+  })
   
-  # Konversi ke plotly
+  df_long <- dplyr::bind_rows(df_list)
+  
+  # Plot
+  p <- ggplot(df_long, aes(x = IndepVar, y = !!sym(varD), color = Variable)) +
+    geom_point(alpha = 0.6, size = 2) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 1.2) +
+    labs(
+      title = "Regression Plot",
+      x = "Independent Variable",
+      y = varD,
+      color = "Variabel"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      axis.title = element_text(size = 14),
+      legend.title = element_text(size = 12),
+      legend.text = element_text(size = 11)
+    ) +
+    scale_color_manual(values = setNames(
+      RColorBrewer::brewer.pal(n = length(ivars), name = "Set2"),
+      ivars
+    ))
+  
   ggplotly(p) %>%
     layout(hoverlabel = list(
       bgcolor = "white",
