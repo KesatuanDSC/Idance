@@ -24,13 +24,13 @@ iBenford_tab <- tabItem(
       selected = "Benford Plot",
       tabPanel(
         "Benford Plot",
-        plotOutput("PlotBenford") %>% withSpinner(color = "#0dc5c1"),
+        plotOutput("PlotBenford") %>% withSpinner(color = "#FFEB7A"),
       ),
       tabPanel(
         "Suspected Records",
         div(
           style = "min-height: 400px; overflow-x: auto; max-width: 100%;",
-          DTOutput("BenfordResult") %>% withSpinner(color = "#0dc5c1")
+          DTOutput("BenfordResult") %>% withSpinner(color = "#FFEB7A")
         )
       )
     )
